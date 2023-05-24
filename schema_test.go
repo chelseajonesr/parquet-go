@@ -193,10 +193,10 @@ func TestSchemaOf(t *testing.T) {
 	required int32 short (INT(16,true));
 }`,
 		},
-    
+
 		{
 			value: new(struct {
-    				IntDate *int32 `parquet:"int_date,date"`
+				IntDate *int32 `parquet:"int_date,date"`
 			}),
 			print: `message {
 	optional int32 int_date (DATE);
@@ -205,15 +205,17 @@ func TestSchemaOf(t *testing.T) {
 
 		{
 			value: new(struct {
-				IntTime  *int64     `parquet:"int_time,timestamp"`
-				TimeTime *time.Time `parquet:"time_time,timestamp"`
+				IntTime    *int64     `parquet:"int_time,timestamp"`
+				TimeTime   *time.Time `parquet:"time_time,timestamp"`
+				NotUTCTime *time.Time `parquet:"not_utc_time,timestamp(notAdjustedToUTC)"`
 			}),
 			print: `message {
 	optional int64 int_time (TIMESTAMP(isAdjustedToUTC=true,unit=MILLIS));
 	optional int64 time_time (TIMESTAMP(isAdjustedToUTC=true,unit=MILLIS));
+	optional int64 not_utc_time (TIMESTAMP(isAdjustedToUTC=false,unit=MILLIS));
 }`,
 		},
-  }
+	}
 
 	for _, test := range tests {
 		t.Run("", func(t *testing.T) {

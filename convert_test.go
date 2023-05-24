@@ -506,19 +506,19 @@ func TestConvertValue(t *testing.T) {
 	us := now.UnixMicro()
 	ns := now.UnixNano()
 
-	msType := parquet.Timestamp(parquet.Millisecond).Type()
+	msType := parquet.Timestamp(parquet.Millisecond, true).Type()
 	msVal := parquet.ValueOf(ms)
 	if msVal.Int64() != ms {
 		t.Errorf("converted value mismatch:\nwant = %+v\ngot  = %+v", ms, msVal.Int64())
 	}
 
-	usType := parquet.Timestamp(parquet.Microsecond).Type()
+	usType := parquet.Timestamp(parquet.Microsecond, true).Type()
 	usVal := parquet.ValueOf(us)
 	if usVal.Int64() != us {
 		t.Errorf("converted value mismatch:\nwant = %+v\ngot  = %+v", us, usVal.Int64())
 	}
 
-	nsType := parquet.Timestamp(parquet.Nanosecond).Type()
+	nsType := parquet.Timestamp(parquet.Nanosecond, true).Type()
 	nsVal := parquet.ValueOf(ns)
 	if nsVal.Int64() != ns {
 		t.Errorf("converted value mismatch:\nwant = %+v\ngot  = %+v", ns, nsVal.Int64())
@@ -1069,7 +1069,7 @@ func TestConvertValue(t *testing.T) {
 			scenario:  "date to millisecond timestamp",
 			fromType:  parquet.Date().Type(),
 			fromValue: parquet.Int32Value(19338),
-			toType:    parquet.Timestamp(parquet.Millisecond).Type(),
+			toType:    parquet.Timestamp(parquet.Millisecond, true).Type(),
 			toValue:   parquet.Int64Value(1670803200000),
 		},
 
@@ -1077,7 +1077,7 @@ func TestConvertValue(t *testing.T) {
 			scenario:  "date to microsecond timestamp",
 			fromType:  parquet.Date().Type(),
 			fromValue: parquet.Int32Value(19338),
-			toType:    parquet.Timestamp(parquet.Microsecond).Type(),
+			toType:    parquet.Timestamp(parquet.Microsecond, true).Type(),
 			toValue:   parquet.Int64Value(1670803200000000),
 		},
 
@@ -1107,7 +1107,7 @@ func TestConvertValue(t *testing.T) {
 
 		{
 			scenario:  "millisecond timestamp to date",
-			fromType:  parquet.Timestamp(parquet.Millisecond).Type(),
+			fromType:  parquet.Timestamp(parquet.Millisecond, true).Type(),
 			fromValue: parquet.Int64Value(1670888613000),
 			toType:    parquet.Date().Type(),
 			toValue:   parquet.Int32Value(19338),
@@ -1115,7 +1115,7 @@ func TestConvertValue(t *testing.T) {
 
 		{
 			scenario:  "microsecond timestamp to date",
-			fromType:  parquet.Timestamp(parquet.Microsecond).Type(),
+			fromType:  parquet.Timestamp(parquet.Microsecond, true).Type(),
 			fromValue: parquet.Int64Value(1670888613000123),
 			toType:    parquet.Date().Type(),
 			toValue:   parquet.Int32Value(19338),
@@ -1123,7 +1123,7 @@ func TestConvertValue(t *testing.T) {
 
 		{
 			scenario:  "millisecond timestamp to millisecond time",
-			fromType:  parquet.Timestamp(parquet.Millisecond).Type(),
+			fromType:  parquet.Timestamp(parquet.Millisecond, true).Type(),
 			fromValue: parquet.Int64Value(1670888613123),
 			toType:    parquet.Time(parquet.Millisecond).Type(),
 			toValue:   parquet.Int32Value(85413123),
@@ -1131,7 +1131,7 @@ func TestConvertValue(t *testing.T) {
 
 		{
 			scenario:  "millisecond timestamp to micronsecond time",
-			fromType:  parquet.Timestamp(parquet.Millisecond).Type(),
+			fromType:  parquet.Timestamp(parquet.Millisecond, true).Type(),
 			fromValue: parquet.Int64Value(1670888613123),
 			toType:    parquet.Time(parquet.Microsecond).Type(),
 			toValue:   parquet.Int64Value(85413123000),
@@ -1139,7 +1139,7 @@ func TestConvertValue(t *testing.T) {
 
 		{
 			scenario:  "microsecond timestamp to millisecond time",
-			fromType:  parquet.Timestamp(parquet.Microsecond).Type(),
+			fromType:  parquet.Timestamp(parquet.Microsecond, true).Type(),
 			fromValue: parquet.Int64Value(1670888613123456),
 			toType:    parquet.Time(parquet.Millisecond).Type(),
 			toValue:   parquet.Int32Value(85413123),
@@ -1147,7 +1147,7 @@ func TestConvertValue(t *testing.T) {
 
 		{
 			scenario:  "microsecond timestamp to micronsecond time",
-			fromType:  parquet.Timestamp(parquet.Microsecond).Type(),
+			fromType:  parquet.Timestamp(parquet.Microsecond, true).Type(),
 			fromValue: parquet.Int64Value(1670888613123456),
 			toType:    parquet.Time(parquet.Microsecond).Type(),
 			toValue:   parquet.Int64Value(85413123456),

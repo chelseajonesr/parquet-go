@@ -1957,8 +1957,8 @@ func (t *timeType) ConvertValue(val Value, typ Type) (Value, error) {
 // Timestamp constructs of leaf node of TIMESTAMP logical type.
 //
 // https://github.com/apache/parquet-format/blob/master/LogicalTypes.md#timestamp
-func Timestamp(unit TimeUnit) Node {
-	return Leaf(&timestampType{IsAdjustedToUTC: true, Unit: unit.TimeUnit()})
+func Timestamp(unit TimeUnit, adjustedToUTC bool) Node {
+	return Leaf(&timestampType{IsAdjustedToUTC: adjustedToUTC, Unit: unit.TimeUnit()})
 }
 
 type timestampType format.TimestampType
