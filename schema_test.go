@@ -2,6 +2,7 @@ package parquet_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/segmentio/parquet-go"
 )
@@ -192,7 +193,27 @@ func TestSchemaOf(t *testing.T) {
 	required int32 short (INT(16,true));
 }`,
 		},
-	}
+    
+		{
+			value: new(struct {
+    				IntDate *int32 `parquet:"int_date,date"`
+			}),
+			print: `message {
+	optional int32 int_date (DATE);
+}`,
+		},
+
+		{
+			value: new(struct {
+				IntTime  *int64     `parquet:"int_time,timestamp"`
+				TimeTime *time.Time `parquet:"time_time,timestamp"`
+			}),
+			print: `message {
+	optional int64 int_time (TIMESTAMP(isAdjustedToUTC=true,unit=MILLIS));
+	optional int64 time_time (TIMESTAMP(isAdjustedToUTC=true,unit=MILLIS));
+}`,
+		},
+  }
 
 	for _, test := range tests {
 		t.Run("", func(t *testing.T) {
