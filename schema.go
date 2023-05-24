@@ -492,7 +492,7 @@ func nodeOf(t reflect.Type, tag []string) Node {
 	case reflect.TypeOf(uuid.UUID{}):
 		return UUID()
 	case reflect.TypeOf(time.Time{}):
-		return Timestamp(Nanosecond)
+		return Timestamp(Nanosecond, true)
 	}
 
 	var n Node
@@ -620,29 +620,37 @@ func parseDecimalArgs(args string) (scale, precision int, err error) {
 	return int(s), int(p), nil
 }
 
-func parseTimestampArgs(args string) (TimeUnit, error) {
+func parseTimestampArgs(args string) (TimeUnit, bool, error) {
 	if !strings.HasPrefix(args, "(") || !strings.HasSuffix(args, ")") {
-		return nil, fmt.Errorf("malformed timestamp args: %s", args)
+		return nil, true, fmt.Errorf("malformed timestamp args: %s. Expected (unit), (unit,adjusted), or (adjusted) where unit is one of millisecond, microsecond, and nanosecond, and adjusted is one of adjustedToUTC, notAdjustedToUTC", args)
 	}
+
+	unit := Millisecond
+	isAdjustedToUTC := true
 
 	args = strings.TrimPrefix(args, "(")
 	args = strings.TrimSuffix(args, ")")
 
-	if len(args) == 0 {
-		return Millisecond, nil
+	for _, arg := range strings.Split(args, ",") {
+		arg = strings.ToLower(strings.TrimSpace(arg))
+		switch arg {
+		case "millisecond":
+			unit = Millisecond
+		case "microsecond":
+			unit = Microsecond
+		case "nanosecond":
+			unit = Nanosecond
+		case "adjustedtoutc", "isadjustedtoutc":
+			isAdjustedToUTC = true
+		case "notadjustedtoutc", "isnotadjustedtoutc":
+			isAdjustedToUTC = false
+		case "":
+		default:
+			return nil, true, fmt.Errorf("unknown time unit: %s", args)
+		}
 	}
 
-	switch args {
-	case "millisecond":
-		return Millisecond, nil
-	case "microsecond":
-		return Microsecond, nil
-	case "nanosecond":
-		return Nanosecond, nil
-	default:
-	}
-
-	return nil, fmt.Errorf("unknown time unit: %s", args)
+	return unit, isAdjustedToUTC, nil
 }
 
 type goNode struct {
@@ -836,20 +844,20 @@ func makeNodeOf(t reflect.Type, name string, tag []string) Node {
 			}
 			switch elemType.Kind() {
 			case reflect.Int64:
-				timeUnit, err := parseTimestampArgs(args)
+				timeUnit, adjustedToUTC, err := parseTimestampArgs(args)
 				if err != nil {
 					throwInvalidTag(elemType, name, option)
 				}
 
-				setNode(Timestamp(timeUnit))
+				setNode(Timestamp(timeUnit, adjustedToUTC))
 			default:
 				switch elemType {
 				case reflect.TypeOf(time.Time{}):
-					timeUnit, err := parseTimestampArgs(args)
+					timeUnit, adjustedToUTC, err := parseTimestampArgs(args)
 					if err != nil {
 						throwInvalidTag(elemType, name, option)
 					}
-					setNode(Timestamp(timeUnit))
+					setNode(Timestamp(timeUnit, adjustedToUTC))
 				default:
 					throwInvalidTag(elemType, name, option)
 				}

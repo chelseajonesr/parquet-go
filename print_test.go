@@ -181,23 +181,44 @@ func TestPrintSchema(t *testing.T) {
 		},
 
 		{
-			node: parquet.Group{"timestamp": parquet.Timestamp(parquet.Millisecond)},
+			node: parquet.Group{"timestamp": parquet.Timestamp(parquet.Millisecond, true)},
 			print: `message Test {
 	required int64 timestamp (TIMESTAMP(isAdjustedToUTC=true,unit=MILLIS));
 }`,
 		},
 
 		{
-			node: parquet.Group{"timestamp": parquet.Timestamp(parquet.Microsecond)},
+			node: parquet.Group{"timestamp": parquet.Timestamp(parquet.Microsecond, true)},
 			print: `message Test {
 	required int64 timestamp (TIMESTAMP(isAdjustedToUTC=true,unit=MICROS));
 }`,
 		},
 
 		{
-			node: parquet.Group{"timestamp": parquet.Timestamp(parquet.Nanosecond)},
+			node: parquet.Group{"timestamp": parquet.Timestamp(parquet.Nanosecond, true)},
 			print: `message Test {
 	required int64 timestamp (TIMESTAMP(isAdjustedToUTC=true,unit=NANOS));
+}`,
+		},
+
+		{
+			node: parquet.Group{"timestamp": parquet.Timestamp(parquet.Millisecond, false)},
+			print: `message Test {
+	required int64 timestamp (TIMESTAMP(isAdjustedToUTC=false,unit=MILLIS));
+}`,
+		},
+
+		{
+			node: parquet.Group{"timestamp": parquet.Timestamp(parquet.Microsecond, false)},
+			print: `message Test {
+	required int64 timestamp (TIMESTAMP(isAdjustedToUTC=false,unit=MICROS));
+}`,
+		},
+
+		{
+			node: parquet.Group{"timestamp": parquet.Timestamp(parquet.Nanosecond, false)},
+			print: `message Test {
+	required int64 timestamp (TIMESTAMP(isAdjustedToUTC=false,unit=NANOS));
 }`,
 		},
 
